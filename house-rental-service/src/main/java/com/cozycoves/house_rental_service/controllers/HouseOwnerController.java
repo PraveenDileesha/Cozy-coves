@@ -19,12 +19,14 @@ public class HouseOwnerController {
     RequestRentService requestRentService;
 
     //Request map to fetch the house through owner ID
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping(value = "/houseowner-view-houses/{ownerID}")
     public List<House> returnHouses(@PathVariable String ownerID){
         return houseOwnerService.getListOfHousesOwned(ownerID);
     }
 
     //Adding houses
+    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping(value = "/houseowner-add-house")
     public void addHouse(@RequestBody House house){
         houseOwnerService.addHouseToListOfHousesOwned(house);
@@ -37,6 +39,7 @@ public class HouseOwnerController {
     }
 
     //Get all the requests for each house
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping(value = "/get-requests/{houseId}")
     public List<Request> getAllRequestsForAHouse(@PathVariable String houseId){
         return requestRentService.getAllRequestsForAHouse(houseId);

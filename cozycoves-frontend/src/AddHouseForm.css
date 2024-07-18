@@ -1,0 +1,94 @@
+/* AddHouseForm.css */
+
+.add-house-form-container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    max-width: 500px;
+    width: 90%;
+    margin: auto;
+    position: relative;
+    overflow-y: auto;
+    max-height: 90vh; /* Ensure the form does not exceed the viewport height */
+  }
+  
+  .add-house-form-container h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+  }
+  
+  .add-house-form-container form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .add-house-form-container label {
+    margin-bottom: 15px;
+  }
+  
+  .add-house-form-container input {
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    width: 100%;
+  }
+  
+  .add-house-form-container button {
+    padding: 10px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    color: white;
+  }
+  
+  .add-house-form-container button[type="submit"] {
+    background-color: #00796b;
+  }
+  
+  .add-house-form-container button[type="button"] {
+    background-color: #757575;
+  }
+  
+  .add-house-form-container button[type="submit"]:hover {
+    background-color: #004d40;
+  }
+  
+  .add-house-form-container button[type="button"]:hover {
+    background-color: #616161;
+  }
+  
+  @media (max-width: 768px) {
+    .add-house-form-container {
+      padding: 15px;
+      max-width: 90%;
+    }
+    
+    .add-house-form-container input {
+      font-size: 14px;
+    }
+    
+    .add-house-form-container button {
+      font-size: 14px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .add-house-form-container {
+      padding: 10px;
+      max-width: 100%;
+    }
+    
+    .add-house-form-container input {
+      font-size: 12px;
+    }
+    
+    .add-house-form-container button {
+      font-size: 12px;
+    }
+  }
+  

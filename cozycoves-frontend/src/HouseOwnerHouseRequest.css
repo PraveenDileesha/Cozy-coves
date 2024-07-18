@@ -1,0 +1,15 @@
+.house-requests-container {
+    margin-top: 20px;
+  }
+  
+  .requests-list {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .request-item {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  
