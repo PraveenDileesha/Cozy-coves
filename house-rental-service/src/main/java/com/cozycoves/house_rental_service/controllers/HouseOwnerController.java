@@ -33,6 +33,7 @@ public class HouseOwnerController {
     }
 
     //Updating house information of the house owner
+    @CrossOrigin(origins = "http://localhost:3000")
     @PutMapping(value = "/houseowner-update-house")
     public void updateHouse(@RequestBody House house){
         houseOwnerService.updateHouse(house);

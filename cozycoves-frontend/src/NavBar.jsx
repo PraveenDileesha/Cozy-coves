@@ -1,32 +1,53 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useAuthContext } from '@asgardeo/auth-react';
+import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
 import './NavBar.css';
 
 const NavBar = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { signOut, isAuthenticated } = useAuthContext();
 
-  const handleLogin = () => {
-    // Logic for login (to be implemented with Asgardeo)
-    setIsLoggedIn(true);
-  };
+  useEffect(() => {
+    const checkAuthentication = async () => {
+      try {
+        const authStatus = await isAuthenticated();
+        console.log("Authentication status:", authStatus);
+      } catch (error) {
+        console.error("Error checking authentication status:", error);
+      }
+    };
 
-  const handleLogout = () => {
-    // Logic for logout (to be implemented with Asgardeo)
-    setIsLoggedIn(false);
+    checkAuthentication();
+  }, [isAuthenticated]);
+
+  const handleSignOut = async () => {
+    try {
+      await signOut().then((res) => {
+        console.log(res);
+      });
+    } catch (error) {
+      console.error("Error signing out", error);
+    }
   };
 
   return (
     <nav className="navbar">
       <h1>Cozy Coves</h1>
       <ul>
-        {isLoggedIn ? (
+        {isAuthenticated ? (
           <>
-            <li><a href="/houses">My Houses</a></li>
-            <li><button onClick={handleLogout}>Logout</button></li>
+            <li>
+              <button onClick={handleSignOut}>Logout</button>
+            </li>
           </>
         ) : (
           <>
-            <li><button onClick={handleLogin}>Login</button></li>
-            <li><button>Sign Up</button></li>
+            <li>
+              <Link to="/login">Login</Link>
+            </li>
+            <li>
+              <Link to="/signup">Sign Up</Link>
+            </li>
           </>
         )}
       </ul>

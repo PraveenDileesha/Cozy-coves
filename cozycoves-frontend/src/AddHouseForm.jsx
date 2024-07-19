@@ -14,7 +14,7 @@ const AddHouseForm = ({ closeModal }) => {
     numberOfRooms: '',
     numberOfBathrooms: '',
     currentRenter: '',
-    status: '',
+    status: 'AVAILABLE', // Default to 'AVAILABLE'
     price: '',
     photos: []
   });
@@ -84,7 +84,12 @@ const AddHouseForm = ({ closeModal }) => {
         </label>
         <label>
           Status:
-          <input type="text" name="status" value={formData.status} onChange={handleChange} required />
+          <select name="status" value={formData.status} onChange={handleChange} required>
+            <option value="AVAILABLE">AVAILABLE</option>
+            <option value="RENTED">RENTED</option>
+            <option value="RENOVATING">RENOVATING</option>
+            <option value="SUSPENDED">SUSPENDED</option>
+          </select>
         </label>
         <label>
           Price:

@@ -1,17 +1,30 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
+import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-import reportWebVitals from './reportWebVitals';
+import { AuthProvider } from '@asgardeo/auth-react';
+import { BrowserRouter } from 'react-router-dom';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
+// Example Asgardeo configuration
+const authConfig = {
+  clientID: 'Y_mxbniY_mHZvE4MuPsolSq24Rka', // Replace with your actual client ID
+  baseUrl: 'https://api.asgardeo.io/t/pinksalt', // Replace with your actual Asgardeo base URL
+  signInRedirectURL: 'http://localhost:3000/AuthPage', // Replace with your actual sign-in redirect URL
+  signOutRedirectURL: 'http://localhost:3000/HomePage', // Replace with your actual sign-out redirect URL
+  scope:["openid","profile","roles"],
+  storage:"sessionStorage"
+};
+
+// Log the authConfig to verify the values
+console.log('authConfig:', authConfig);
+
+ReactDOM.render(
   <React.StrictMode>
-    <App />
-  </React.StrictMode>
+    <AuthProvider config={authConfig}>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </AuthProvider>
+  </React.StrictMode>,
+  document.getElementById('root')
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
