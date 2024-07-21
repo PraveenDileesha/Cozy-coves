@@ -18,7 +18,15 @@ public class RenterController {
     @Autowired
     RequestRentService requestRentService;
 
+    //Get all the houses available
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping(value = "/renter-view-houses")
+    public List<House> viewAllHouses(){
+        return renterService.getAllTheHousesAvailable();
+    }
+
     //Get houses related to the users location and available
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping(value = "/renter-view-houses/{addressLine3}")
     public List<House> viewHouses(@PathVariable String addressLine3){
         return renterService.getHouseBasedOnLocation(addressLine3);

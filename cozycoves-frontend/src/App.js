@@ -5,6 +5,7 @@ import HomePage from './HomePage';
 import HouseOwnerHouseList from './HouseOwnerHouseList';
 import HouseOwnerHouseRequest from './HouseOwnerHouseRequest';
 import AuthPage from './AuthPage';
+import Renter from './Renter'
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
             <Route path="/AuthPage" element={<AuthPage/>}/>
             <Route path="/HouseOwner/:username" element={<HouseOwnerHouseList />} /> 
             <Route path="/house/:houseId" element={<HouseOwnerHouseRequest />} />
+            <Route path="/Renter" element={<Renter/>}/>
             <Route path="/signup" element={<div>Sign Up Page (to be implemented)</div>} />
           </Routes>
         </main>

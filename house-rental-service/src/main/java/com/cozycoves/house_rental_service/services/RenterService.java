@@ -19,6 +19,11 @@ public class RenterService {
         this.houseRepository = houseRepository;
     }
 
+    //Method to retrieve all the houses
+    public List<House> getAllTheHousesAvailable(){
+        return houseRepository.findAll();
+    }
+
     //Method to retrieve available houses at the location of the renter
     public List<House> getHouseBasedOnLocation(String addressLine3) {
         return houseRepository.findByAddressLine3(addressLine3);

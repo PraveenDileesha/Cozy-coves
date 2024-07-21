@@ -1,0 +1,37 @@
+.house-list-container {
+    padding: 20px;
+    background-color: #f8f8f8;
+  }
+  
+  .house-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  
+  .house-box {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: calc(33.333% - 20px); /* Adjusts to three columns with a gap of 20px */
+    box-sizing: border-box;
+    text-decoration: none;
+    color: #333;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  .house-box h3 {
+    margin-top: 0;
+  }
+  
+  .house-box p {
+    margin: 8px 0;
+  }
+  
+  .house-box:hover {
+    background-color: #e0f7fa; /* Change background color on hover */
+    color: #00796b; /* Change text color on hover */
+  }
+  
