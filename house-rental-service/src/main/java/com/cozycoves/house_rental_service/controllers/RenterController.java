@@ -32,6 +32,7 @@ public class RenterController {
         return renterService.getHouseBasedOnLocation(addressLine3);
     }
     //view individual house information
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping(value = "/individual-house-info/{houseId}")
     public House getHouseInfo(@PathVariable String houseId){
         return renterService.getIndividualHouseInfo(houseId);

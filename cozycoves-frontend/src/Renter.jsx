@@ -65,12 +65,11 @@ const Renter = () => {
       </form>
       <div className="house-list">
         {houses.map((house) => (
-          <Link key={house.houseId} to={`/house/${house.houseId}`} className="house-box">
-            <h3>{house.description}</h3>
-            <p><strong>Owner:</strong> {house.owner}</p>
-            <p><strong>Address:</strong> {house.addressLine1}, {house.addressLine2}, {house.addressLine3}</p>
-            {/* Add more details as needed */}
-          </Link>
+          <Link key={house.houseId} to={`/renter-house/${house.houseId}`} className="house-box">
+          <h3>{house.description}</h3>
+          <p><strong>Owner:</strong> {house.owner}</p>
+          <p><strong>Address:</strong> {house.addressLine1}, {house.addressLine2}, {house.addressLine3}</p>
+        </Link>
         ))}
       </div>
     </div>

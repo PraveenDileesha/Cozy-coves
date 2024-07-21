@@ -59,7 +59,7 @@ const HouseOwnerHouseList = () => {
       <h2>Your Houses</h2>
       <div className="house-list">
         {houses.map((house) => (
-          <Link key={house.houseId} to={`/house/${house.houseId}`} className="house-box">
+          <Link key={house.houseId} to={`/house-owner/${house.houseId}`} className="house-box">
             <h3>{house.description}</h3>
             <p><strong>Owner:</strong> {house.owner}</p>
             <p><strong>Address:</strong> {house.addressLine1}, {house.addressLine2}, {house.addressLine3}</p>
@@ -68,9 +68,11 @@ const HouseOwnerHouseList = () => {
         ))}
       </div>
       <button className="fab" onClick={openModal}>+</button>
-      {isModalOpen && <div className="modal-overlay">
-        <AddHouseForm closeModal={closeModal} />
-      </div>}
+      {isModalOpen && (
+        <div className="modal-overlay">
+          <AddHouseForm closeModal={closeModal} username={username} />
+        </div>
+      )}
     </div>
   );
 };

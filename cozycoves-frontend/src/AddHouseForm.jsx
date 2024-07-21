@@ -1,23 +1,67 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './AddHouseForm.css';
 
-const AddHouseForm = ({ closeModal }) => {
+// Function to generate a random house ID
+const generateUniqueHouseId = async () => {
+  const prefix = 'H';
+  const length = 5;
+  
+  // Helper function to generate a random number
+  const generateRandomNumber = (length) => Math.floor(Math.random() * Math.pow(10, length)).toString().padStart(length, '0');
+  
+  // Helper function to generate the ID
+  const generateId = () => `${prefix}${generateRandomNumber(length)}`;
+
+  // Check if the ID exists in the database
+  const checkIdExists = async (id) => {
+    try {
+      const response = await axios.get(`/houseowner-check-house-id/${id}`);
+      return response.data.exists; // Expecting a boolean response indicating if the ID exists
+    } catch (error) {
+      console.error('Error checking house ID existence:', error);
+      return false;
+    }
+  };
+
+  let uniqueIdFound = false;
+  let id = '';
+
+  // Keep generating a new ID until a unique one is found
+  while (!uniqueIdFound) {
+    id = generateId();
+    uniqueIdFound = !(await checkIdExists(id));
+  }
+
+  return id;
+};
+
+const AddHouseForm = ({ closeModal, username }) => {
   const [formData, setFormData] = useState({
     houseId: '',
     description: '',
     owner: '',
-    ownerID: '',
     addressLine1: '',
     addressLine2: '',
     addressLine3: '',
     numberOfRooms: '',
     numberOfBathrooms: '',
     currentRenter: '',
-    status: 'AVAILABLE', // Default to 'AVAILABLE'
+    status: 'AVAILABLE',
     price: '',
-    photos: []
   });
+
+  useEffect(() => {
+    const fetchAndSetHouseId = async () => {
+      const newHouseId = await generateUniqueHouseId();
+      setFormData(prevData => ({
+        ...prevData,
+        houseId: newHouseId
+      }));
+    };
+
+    fetchAndSetHouseId();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -31,7 +75,10 @@ const AddHouseForm = ({ closeModal }) => {
     e.preventDefault();
     try {
       axios.defaults.baseURL = 'http://localhost:8080';
-      await axios.post('/houseowner-add-house', formData);
+      await axios.post('/houseowner-add-house', {
+        ...formData,
+        ownerID: username
+      });
       closeModal();
     } catch (error) {
       console.error('Error adding house:', error);
@@ -42,10 +89,7 @@ const AddHouseForm = ({ closeModal }) => {
     <div className="add-house-form-container">
       <form onSubmit={handleSubmit}>
         <h2>Add New House</h2>
-        <label>
-          House ID:
-          <input type="text" name="houseId" value={formData.houseId} onChange={handleChange} required />
-        </label>
+        {/* Remove the House ID field from the form */}
         <label>
           Description:
           <input type="text" name="description" value={formData.description} onChange={handleChange} required />
@@ -53,10 +97,6 @@ const AddHouseForm = ({ closeModal }) => {
         <label>
           Owner:
           <input type="text" name="owner" value={formData.owner} onChange={handleChange} required />
-        </label>
-        <label>
-          Owner ID:
-          <input type="text" name="ownerID" value={formData.ownerID} onChange={handleChange} required />
         </label>
         <label>
           Address Line 1:
@@ -94,10 +134,6 @@ const AddHouseForm = ({ closeModal }) => {
         <label>
           Price:
           <input type="number" name="price" value={formData.price} onChange={handleChange} required />
-        </label>
-        <label>
-          Photos:
-          <input type="text" name="photos" value={formData.photos} onChange={handleChange} />
         </label>
         <button type="submit">Add House</button>
         <button type="button" onClick={closeModal}>Cancel</button>

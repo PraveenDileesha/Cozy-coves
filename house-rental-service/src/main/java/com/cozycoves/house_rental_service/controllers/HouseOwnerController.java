@@ -5,9 +5,12 @@ import com.cozycoves.house_rental_service.models.Request;
 import com.cozycoves.house_rental_service.services.HouseOwnerService;
 import com.cozycoves.house_rental_service.services.RequestRentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class HouseOwnerController {
@@ -44,5 +47,12 @@ public class HouseOwnerController {
     @GetMapping(value = "/get-requests/{houseId}")
     public List<Request> getAllRequestsForAHouse(@PathVariable String houseId){
         return requestRentService.getAllRequestsForAHouse(houseId);
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/houseowner-check-house-id/{houseId}")
+    public ResponseEntity<Map<String, Boolean>> checkHouseIdExists(@PathVariable String houseId) {
+        boolean exists = houseOwnerService.getHouseById(houseId) != null;
+        return ResponseEntity.ok(Collections.singletonMap("exists", exists));
     }
 }
