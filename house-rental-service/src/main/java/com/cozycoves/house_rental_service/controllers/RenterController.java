@@ -38,6 +38,7 @@ public class RenterController {
         return renterService.getIndividualHouseInfo(houseId);
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping(value = "request-house")
     public void requestHouse(@RequestBody Request request){
         requestRentService.requestHouseService(request);
