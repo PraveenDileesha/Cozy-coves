@@ -1,6 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import './AddHouseForm.css';
+import { useAuthContext } from '@asgardeo/auth-react';
+
+// // Simulating getAccessToken function, replace with actual implementation
+// const getAccessToken = async () => {
+//   return "your_access_token"; // Replace with the actual token fetching logic
+// };
 
 const EditHouseForm = ({ closeModal, house }) => {
   const [formData, setFormData] = useState({
@@ -17,6 +23,28 @@ const EditHouseForm = ({ closeModal, house }) => {
     price: house.price,
   });
 
+  const axiosInterceptorSet = useRef(false);
+  const token = useRef("");
+  const {getAccessToken} = useAuthContext();
+
+  const setupAxiosInterceptor = async () => {
+    const _token = await getAccessToken();
+    token.current = _token;
+    console.log("Access token", token.current);
+  };
+
+  useEffect(() => {
+    if (!axiosInterceptorSet.current) {
+      setupAxiosInterceptor()
+        .then(() => {
+          axiosInterceptorSet.current = true;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  }, []);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -29,7 +57,12 @@ const EditHouseForm = ({ closeModal, house }) => {
     e.preventDefault();
     try {
       console.log('Submitting form with data:', formData); // Debug log
-      const response = await axios.put('http://localhost:8080/admin-update-house', formData);
+      const response = await axios.put('http://localhost:8080/admin-update-house', formData, {
+        headers: {
+          'Authorization': `Bearer ${token.current}`,
+          'Content-Type': 'application/json'
+        }
+      });
       console.log('Response from server:', response); // Debug log
       closeModal();
     } catch (error) {

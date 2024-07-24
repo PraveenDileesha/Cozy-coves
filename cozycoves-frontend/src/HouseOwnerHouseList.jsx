@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useParams, Link } from 'react-router-dom';
 import AddHouseForm from './AddHouseForm';
 import NavBar from './NavBar'; // Import the NavBar component
 import './HouseOwnerHouseList.css';
+import { useAuthContext } from '@asgardeo/auth-react';
 
 const HouseOwnerHouseList = () => {
   const { username } = useParams(); // Get the username from the route parameters
@@ -11,12 +12,50 @@ const HouseOwnerHouseList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const {getAccessToken} = useAuthContext();
+
+  const axiosInterceptorSet = useRef(false);
+
+    const token = useRef("");
+
+
+    // Get access token from asgardeo SDK and add it to the request headers
+    const setupAxiosInterceptor = async () => {
+        const _token = await getAccessToken();
+        token.current = _token;
+        console.log("Access token", token.current);
+        // axios.defaults.headers['Authorization'] = `Bearer ${token}`;
+    };
+
+
+    useEffect(() => {
+        // if(!axiosInterceptorSet.current){
+        //     setupAxiosInterceptor();
+        //     axiosInterceptorSet.current = true;
+        // }
+        // getAllPCBs();
+
+        if (!axiosInterceptorSet.current) {
+            setupAxiosInterceptor().then(() => {
+                axiosInterceptorSet.current = true;
+                // fetchHouses();
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+        }
+    }, []);
 
   useEffect(() => {
     const fetchHouses = async () => {
       try {
         axios.defaults.baseURL = 'http://localhost:8080';
-        const response = await axios.get(`/houseowner-view-houses/${username}`); // Use the username as owner ID
+        const response = await axios.get(`/houseowner-view-houses/${username}`,
+          {headers : {
+            'Authorization' : `Bearer ${token.current}`,
+            'Content-Type' : 'application/json'
+          }}
+        ); // Use the username as owner ID
         setHouses(response.data);
         setLoading(false);
       } catch (error) {
@@ -36,7 +75,12 @@ const HouseOwnerHouseList = () => {
   const closeModal = () => {
     setIsModalOpen(false);
     // Refetch houses after adding a new one
-    axios.get(`/houseowner-view-houses/${username}`)
+    axios.get(`/houseowner-view-houses/${username}`,
+      {headers : {
+        'Authorization' : `Bearer ${token.current}`,
+        'Content-Type' : 'application/json'
+      }}
+    )
       .then(response => {
         setHouses(response.data);
       })

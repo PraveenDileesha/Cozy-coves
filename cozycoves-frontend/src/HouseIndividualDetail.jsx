@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect , useRef} from 'react';
 import axios from 'axios';
 import './HouseIndividualDetail.css'; // Create and import a CSS file for styling
 import { useParams } from 'react-router-dom';
@@ -13,12 +13,53 @@ const HouseIndividualDetail = () => {
   const [isRented, setIsRented] = useState(false);
 
   const { getBasicUserInfo } = useAuthContext();
+  const {getAccessToken} = useAuthContext();
+
+  const axiosInterceptorSet = useRef(false);
+
+    const token = useRef("");
+
+
+    // Get access token from asgardeo SDK and add it to the request headers
+    const setupAxiosInterceptor = async () => {
+        const _token = await getAccessToken();
+        token.current = _token;
+        console.log("Access token", token.current);
+        // axios.defaults.headers['Authorization'] = `Bearer ${token}`;
+    };
+
+
+    useEffect(() => {
+        // if(!axiosInterceptorSet.current){
+        //     setupAxiosInterceptor();
+        //     axiosInterceptorSet.current = true;
+        // }
+        // getAllPCBs();
+
+        if (!axiosInterceptorSet.current) {
+            setupAxiosInterceptor().then(() => {
+                axiosInterceptorSet.current = true;
+                // fetchHouse();
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+        }
+    }, []);
+
 
   useEffect(() => {
     const fetchHouse = async () => {
       try {
         axios.defaults.baseURL = 'http://localhost:8080';
-        const houseResponse = await axios.get(`/individual-house-info/${houseId}`);
+        const houseResponse = await axios.get(`/individual-house-info/${houseId}`,
+          {
+            headers : {
+              'Authorization' : `Bearer ${token.current}`,
+              'Content-Type' : 'application/json'
+            }
+          }
+        );
         setHouse(houseResponse.data);
         setIsRented(houseResponse.data.status === 'Rented');
       } catch (error) {
@@ -48,7 +89,11 @@ const HouseIndividualDetail = () => {
       await axios.post(`/request-house`, {
         houseId: houseId,
         renter: userName, // Replace with actual logged-in user identifier
-        approvedStatus: 'Pending'
+        approvedStatus: 'Pending',
+        headers : {
+          'Authorization' : `Bearer ${token.current}`,
+          'Content-Type' : 'application/json'
+        }
       });
       setIsRented(true);
     } catch (error) {

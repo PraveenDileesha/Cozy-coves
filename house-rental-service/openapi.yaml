@@ -1,0 +1,256 @@
+openapi: 3.0.1
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+- url: http://localhost:8080
+  description: Generated server url
+paths:
+  /houseowner-update-house:
+    put:
+      tags:
+      - house-owner-controller
+      operationId: updateHouse
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/House"
+        required: true
+      responses:
+        "200":
+          description: OK
+  /admin-update-house:
+    put:
+      tags:
+      - admin-controller
+      operationId: updateHouse_1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/House"
+        required: true
+      responses:
+        "200":
+          description: OK
+  /request-house:
+    post:
+      tags:
+      - renter-controller
+      operationId: requestHouse
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request"
+        required: true
+      responses:
+        "200":
+          description: OK
+  /houseowner-add-house:
+    post:
+      tags:
+      - house-owner-controller
+      operationId: addHouse
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/House"
+        required: true
+      responses:
+        "200":
+          description: OK
+  /admin-add-house:
+    post:
+      tags:
+      - admin-controller
+      operationId: addHouse_1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/House"
+        required: true
+      responses:
+        "200":
+          description: OK
+  /renter-view-houses:
+    get:
+      tags:
+      - renter-controller
+      operationId: viewAllHouses
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/House"
+  /renter-view-houses/{addressLine3}:
+    get:
+      tags:
+      - renter-controller
+      operationId: viewHouses
+      parameters:
+      - name: addressLine3
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/House"
+  /individual-house-info/{houseId}:
+    get:
+      tags:
+      - renter-controller
+      operationId: getHouseInfo
+      parameters:
+      - name: houseId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/House"
+  /houseowner-view-houses/{ownerID}:
+    get:
+      tags:
+      - house-owner-controller
+      operationId: returnHouses
+      parameters:
+      - name: ownerID
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/House"
+  /houseowner-check-house-id/{houseId}:
+    get:
+      tags:
+      - house-owner-controller
+      operationId: checkHouseIdExists
+      parameters:
+      - name: houseId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  type: boolean
+  /get-requests/{houseId}:
+    get:
+      tags:
+      - house-owner-controller
+      operationId: getAllRequestsForAHouse
+      parameters:
+      - name: houseId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Request"
+  /admin-view-all-houses:
+    get:
+      tags:
+      - admin-controller
+      operationId: viewAllHouses_1
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/House"
+components:
+  schemas:
+    House:
+      type: object
+      properties:
+        houseId:
+          type: string
+        photos:
+          type: array
+          items:
+            type: string
+        description:
+          type: string
+        owner:
+          type: string
+        addressLine1:
+          type: string
+        addressLine2:
+          type: string
+        addressLine3:
+          type: string
+        numberOfRooms:
+          type: integer
+          format: int32
+        numberOfBathrooms:
+          type: integer
+          format: int32
+        currentRenter:
+          type: string
+        status:
+          type: string
+          enum:
+          - AVAILABLE
+          - RENTED
+          - RENOVATING
+          - SUSPENDED
+        price:
+          type: number
+          format: double
+        ownerID:
+          type: string
+    Request:
+      type: object
+      properties:
+        requestId:
+          type: string
+        houseId:
+          type: string
+        renter:
+          type: string
+        approvedStatus:
+          type: string

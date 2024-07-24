@@ -1,42 +1,77 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import './AddHouseForm.css';
+import { useAuthContext } from '@asgardeo/auth-react';
 
-// Function to generate a random house ID
-const generateUniqueHouseId = async () => {
-  const prefix = 'H';
-  const length = 5;
-  
-  // Helper function to generate a random number
-  const generateRandomNumber = (length) => Math.floor(Math.random() * Math.pow(10, length)).toString().padStart(length, '0');
-  
-  // Helper function to generate the ID
-  const generateId = () => `${prefix}${generateRandomNumber(length)}`;
 
-  // Check if the ID exists in the database
-  const checkIdExists = async (id) => {
-    try {
-      const response = await axios.get(`/houseowner-check-house-id/${id}`);
-      return response.data.exists; // Expecting a boolean response indicating if the ID exists
-    } catch (error) {
-      console.error('Error checking house ID existence:', error);
-      return false;
-    }
-  };
-
-  let uniqueIdFound = false;
-  let id = '';
-
-  // Keep generating a new ID until a unique one is found
-  while (!uniqueIdFound) {
-    id = generateId();
-    uniqueIdFound = !(await checkIdExists(id));
-  }
-
-  return id;
-};
+// // Simulating getAccessToken function, replace with actual implementation
+// const getAccessToken = async () => {
+//   return "your_access_token"; // Replace with the actual token fetching logic
+// };
 
 const AddHouseForm = ({ closeModal, username }) => {
+  const axiosInterceptorSet = useRef(false);
+  const token = useRef("");
+  const {getAccessToken} = useAuthContext();
+
+
+  const setupAxiosInterceptor = async () => {
+    const _token = await getAccessToken();
+    token.current = _token;
+    console.log("Access token", token.current);
+  };
+
+  useEffect(() => {
+    if (!axiosInterceptorSet.current) {
+      setupAxiosInterceptor()
+        .then(() => {
+          axiosInterceptorSet.current = true;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  }, []);
+
+  // Function to generate a random house ID
+  const generateUniqueHouseId = async () => {
+    const prefix = 'H';
+    const length = 5;
+
+    // Helper function to generate a random number
+    const generateRandomNumber = (length) => Math.floor(Math.random() * Math.pow(10, length)).toString().padStart(length, '0');
+
+    // Helper function to generate the ID
+    const generateId = () => `${prefix}${generateRandomNumber(length)}`;
+
+    // Check if the ID exists in the database
+    const checkIdExists = async (id) => {
+      try {
+        const response = await axios.get(`/houseowner-check-house-id/${id}`, {
+          headers: {
+            'Authorization': `Bearer ${token.current}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        return response.data.exists; // Expecting a boolean response indicating if the ID exists
+      } catch (error) {
+        console.error('Error checking house ID existence:', error);
+        return false;
+      }
+    };
+
+    let uniqueIdFound = false;
+    let id = '';
+
+    // Keep generating a new ID until a unique one is found
+    while (!uniqueIdFound) {
+      id = generateId();
+      uniqueIdFound = !(await checkIdExists(id));
+    }
+
+    return id;
+  };
+
   const [formData, setFormData] = useState({
     houseId: '',
     description: '',
@@ -77,7 +112,12 @@ const AddHouseForm = ({ closeModal, username }) => {
       axios.defaults.baseURL = 'http://localhost:8080';
       await axios.post('/houseowner-add-house', {
         ...formData,
-        ownerID: username
+        ownerID: username,
+      }, {
+        headers: {
+          'Authorization': `Bearer ${token.current}`,
+          'Content-Type': 'application/json'
+        }
       });
       closeModal();
     } catch (error) {

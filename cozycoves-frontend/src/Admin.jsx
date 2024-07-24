@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useRef } from 'react';
 import NavBar from './NavBar';
 import AddHouseForm from './AddHouseForm';
 import EditHouseForm from './EditHouseForm.jsx';
@@ -12,9 +12,47 @@ const Admin = () => {
   const [selectedHouse, setSelectedHouse] = useState(null);
   const username = "admin"; // Replace with the actual username logic if needed
 
+  const axiosInterceptorSet = useRef(false);
+
+    const token = useRef("");
+
+
+    // Get access token from asgardeo SDK and add it to the request headers
+    const setupAxiosInterceptor = async () => {
+        const _token = await getAccessToken();
+        token.current = _token;
+        console.log("Access token", token.current);
+        // axios.defaults.headers['Authorization'] = `Bearer ${token}`;
+    };
+
+
+    useEffect(() => {
+        // if(!axiosInterceptorSet.current){
+        //     setupAxiosInterceptor();
+        //     axiosInterceptorSet.current = true;
+        // }
+        // getAllPCBs();
+
+        if (!axiosInterceptorSet.current) {
+            setupAxiosInterceptor().then(() => {
+                axiosInterceptorSet.current = true;
+                fetchHouses();
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+        }
+    }, []);
+
+
   const fetchHouses = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/admin-view-all-houses');
+      const response = await axios.get('http://localhost:8080/admin-view-all-houses', {
+        headers : {
+          'Authorization' : `Bearer ${token.current}`,
+          'Content-Type' : 'application/json'
+        }
+      });
       setHouses(response.data);
     } catch (error) {
       console.error('Error fetching houses:', error);
