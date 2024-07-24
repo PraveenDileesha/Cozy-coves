@@ -2,37 +2,52 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './HouseIndividualDetail.css'; // Create and import a CSS file for styling
 import { useParams } from 'react-router-dom';
+import { useAuthContext } from '@asgardeo/auth-react';
 
 const HouseIndividualDetail = () => {
   const { houseId } = useParams();
   const [house, setHouse] = useState(null);
+  const [userName, setUserName] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isRented, setIsRented] = useState(false);
+
+  const { getBasicUserInfo } = useAuthContext();
 
   useEffect(() => {
     const fetchHouse = async () => {
       try {
         axios.defaults.baseURL = 'http://localhost:8080';
-        const response = await axios.get(`/individual-house-info/${houseId}`);
-        setHouse(response.data);
-        setLoading(false);
-        setIsRented(response.data.status === 'Rented');
+        const houseResponse = await axios.get(`/individual-house-info/${houseId}`);
+        setHouse(houseResponse.data);
+        setIsRented(houseResponse.data.status === 'Rented');
       } catch (error) {
         console.error('Error fetching house details:', error);
         setError(error);
+      } finally {
         setLoading(false);
       }
     };
 
+    const fetchUserInfo = async () => {
+      try {
+        const userInfo = await getBasicUserInfo();
+        setUserName(userInfo.username);
+      } catch (error) {
+        console.error('Error fetching user info:', error);
+        setError(error);
+      }
+    };
+
     fetchHouse();
-  }, [houseId]);
+    fetchUserInfo();
+  }, [houseId, getBasicUserInfo]);
 
   const handleRentRequest = async () => {
     try {
       await axios.post(`/request-house`, {
         houseId: houseId,
-        renter: 'currentLoggedInUser', // Replace with actual logged-in user identifier
+        renter: userName, // Replace with actual logged-in user identifier
         approvedStatus: 'Pending'
       });
       setIsRented(true);
@@ -44,7 +59,7 @@ const HouseIndividualDetail = () => {
   const handleCancelRequest = async () => {
     try {
       // Implement cancel request logic
-      // await axios.post(`/cancel-rent-request`, { houseId, renter: 'currentLoggedInUser' });
+      // await axios.post(`/cancel-rent-request`, { houseId, renter: userName });
       setIsRented(false);
     } catch (error) {
       console.error('Error canceling rent request:', error);

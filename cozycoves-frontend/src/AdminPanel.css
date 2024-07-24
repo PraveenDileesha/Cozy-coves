@@ -1,0 +1,44 @@
+.admin-panel-container {
+    padding: 20px;
+}
+
+.admin-buttons {
+    margin-bottom: 20px;
+}
+
+.admin-buttons button {
+    padding: 10px 20px;
+    margin: 5px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.house-list {
+    margin-left: 4cm;
+
+    align-self: center;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.house-container {
+    margin-left: 10cm;
+    align-content:center ;
+    background-color: #f8f9fa;
+    padding: 40px;
+    margin: 10px;
+    border: 4px solid #ddd;
+    border-radius: 5px;
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Ensures the content is spaced evenly */
+}
+
+.house-container p {
+    margin: 5px 0; /* Adds some space between the paragraphs */
+    text-align: left; /* Justifies the text */
+}
